@@ -1,9 +1,11 @@
 programa
-    
-    entero a = 5
-    entero b = 10
+    escribir "test variables"
+    entero a = 10
+    entero b = 5
     entero c = a + b
-    entero d = a
     escribir c
-    escribir d
+    char l = 'x'
+    escribir l
+    cadena s = "hola"
+    escribir s
 fin

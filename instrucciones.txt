@@ -1,3 +1,77 @@
 gcc main.c lexer.c parser.c symbols.c generator.c vm.c -o interprete
 
 ./interprete prueba.alg
+
+#Variables y sumas
+programa
+    escribir "test variables"
+    entero a = 10
+    entero b = 5
+    entero c = a + b
+    escribir c
+    char l = 'x'
+    escribir l
+    cadena s = "hola"
+    escribir s
+fin
+
+#condicional si
+programa
+    escribir "test si"
+    entero x = 5
+    si x < 10 entonces {
+        escribir "es menor"
+    }
+fin
+
+#bucle mientras
+programa
+    escribir "test mientras"
+    entero i = 0
+    mientras i < 3 hacer {
+        escribir i
+        i = i + 1
+    }
+fin
+
+#bucle para
+programa
+    escribir "test para"
+    para (entero i = 0; i < 3; i = i + 1) {
+        escribir i
+    }
+fin
+
+#listas
+
+programa
+    escribir "test listas"
+    lista nums = [10, 20, 30]
+    escribir nums
+    entero val = nums[1]
+    escribir val
+fin
+
+#funciones
+
+programa
+    funcion entero sumar(entero a, entero b) {
+        retornar a + b
+    }
+    escribir "test funciones"
+    entero r = sumar(4, 6)
+    escribir r
+fin
+
+#todo junto
+
+programa
+    escribir "test completo"
+    lista datos = [1, 2, 3]
+    para (entero i = 0; i < 3; i = i + 1) {
+        entero n = datos[i]
+        si n < 3 entonces {
+            escribir n
+        }
+    }
+fin

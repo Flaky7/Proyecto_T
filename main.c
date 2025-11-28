@@ -35,16 +35,16 @@ int main(int argc, char* argv[]) {
     // 1. Inicializar
     initLexer(source);
     initGenerator();
-    initSymbolTable(); // Ahora sí funcionará porque incluimos symbols.h
+    initSymbolTable();
     
     // 2. Compilar
     printf("Compilando...\n");
     parse(); 
     
-    // 3. Debug (Opcional)
+    // 3. Debug
     printGeneratedCode(); 
     
-    // 4. Ejecutar (SOLO UNA VEZ)
+    // 4. Ejecutar
     runVM(getCode(), getCodeCount());
     
     // 5. Limpieza

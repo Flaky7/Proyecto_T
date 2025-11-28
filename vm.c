@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "generator.h" // <--- OBLIGATORIO: Para ver getStringConstant y evitar crashes
+#include "generator.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,7 +9,7 @@ int sp = -1, fp = 0;
 int globals[100];
 int returnStack[100], fpStack[100], callDepth = 0;
 
-// === HEAP PARA LISTAS ===
+// HEAP PARA LISTAS
 typedef struct {
     int* data;
     int size;
@@ -42,7 +42,7 @@ int listGet(int listId, int index) {
     return listHeap[listId].data[index];
 }
 
-// === UTILS VM ===
+// UTILS VM
 void push(int v) { 
     if(sp >= STACK_SIZE-1) { printf("Error: Stack Overflow\n"); exit(1); }
     stack[++sp] = v; 
@@ -57,7 +57,7 @@ void runVM(Instruction* code, int count) {
     int ip = 0;
     
     while(1) {
-        // SEGURIDAD: Si ip se sale del código, paramos
+        // SEGURIDAD: Si ip se sale del codigo, paramos
         if (ip >= count) { printf("Error: IP fuera de rango\n"); return; }
         
         Instruction i = code[ip];
@@ -101,7 +101,7 @@ void runVM(Instruction* code, int count) {
                 push(val1); 
                 break;
 
-            // --- IMPRESION ---
+            // IMPRESION
             case OP_ESCRIBIR_INT: 
                 printf("OUT [INT]: %d\n", pop()); ip++; break;
                 
@@ -110,7 +110,6 @@ void runVM(Instruction* code, int count) {
                 
             case OP_ESCRIBIR_STR:
                 val1 = pop(); 
-                // AQUI OCURRIA EL CRASH SI FALTABA generator.h
                 printf("OUT [STR]: %s\n", getStringConstant(val1)); 
                 ip++; break;
                 
@@ -122,7 +121,7 @@ void runVM(Instruction* code, int count) {
                 printf("]\n");
                 ip++; break;
 
-            // --- LISTAS ---
+            // LISTAS
             case OP_NUEVA_LISTA:
                 val1 = createList();
                 push(val1); 
@@ -143,7 +142,7 @@ void runVM(Instruction* code, int count) {
                 
             case OP_HALT: 
                 printf("=== FIN DEL PROGRAMA ===\n"); 
-                return; // <--- IMPORTANTE: Rompe el bucle while(1)
+                return;
             
             default:
                 printf("Error: OpCode desconocido %d\n", i.op);

@@ -16,7 +16,7 @@ void statement();
 void expression();
 void parseListLiteral();
 
-// Función auxiliar para validar y consumir tokens
+// Funcion auxiliar para validar y consumir tokens
 void match(TokenType t) {
     if(peekToken().type == t) {
         getNextToken();
@@ -114,9 +114,9 @@ void expression() {
             
             // C) ¿Es un ACCESO A LISTA? -> nombre[indice]
             if (peekToken().type == TOK_COR_IZQ) {
-                match(TOK_COR_IZQ); // [
-                expression();       // El índice (ej: 0)
-                match(TOK_COR_DER); // ]
+                match(TOK_COR_IZQ);
+                expression();
+                match(TOK_COR_DER); 
                 
                 // Stack antes: [ID_LISTA, INDICE]
                 // Stack despues: [ELEMENTO]
@@ -124,13 +124,12 @@ void expression() {
             }
         }
     }
-    // 6. Paréntesis agrupadores
+    // 6. Parentesis agrupadores
     else if (t.type == TOK_PAR_IZQ) {
         match(TOK_PAR_IZQ); expression(); match(TOK_PAR_DER);
     }
     
     // --- OPERACIONES BINARIAS ---
-    // (Implementación simple sin precedencia de operadores completa para brevedad)
     if (peekToken().type == TOK_SUMA) { getNextToken(); expression(); emit(OP_SUMAR, 0, 0, 0); }
     else if (peekToken().type == TOK_RESTA) { getNextToken(); expression(); emit(OP_RESTAR, 0, 0, 0); }
     else if (peekToken().type == TOK_MENOR) { getNextToken(); expression(); emit(OP_MENOR, 0, 0, 0); }
@@ -169,7 +168,7 @@ void statement() {
         Token id = getNextToken();
         
         // Verificamos si es var[i] = val (Asignacion a lista) o var = val
-        // Por simplicidad para este demo, solo soportamos var = val
+        // Por simplicidad, solo soportamos var = val
         match(TOK_ASIGNAR); 
         expression();
         
@@ -178,7 +177,7 @@ void statement() {
         emit(OP_GUARDAR_VAR, s->address, (s->kind == SYM_VAR_LOCAL), 0);
     }
     
-    // 3. COMANDO ESCRIBIR (Inteligente)
+    // 3. COMANDO ESCRIBIR
     else if (t.type == TOK_ESCRIBIR) {
         getNextToken(); // Consumir 'escribir'
         
@@ -294,28 +293,42 @@ void block() {
 
 void functionDef() {
     match(TOK_FUNC);
-    Token name = getNextToken();
-    match(TOK_PAR_IZQ);
     
-    // Registramos la función
-    declareSymbol(name.value, SYM_FUNCION, TIPO_VOID, getCodeCount(), 0);
+    // 1. DETECTAR TIPO DE RETORNO (Opcional o Declarado)
+    DataType returnType = TIPO_VOID; 
+    Token t = peekToken();
+    
+    // Si el siguiente token es un tipo, lo consumimos como tipo de retorno
+    if (t.type == TOK_ENTERO) { match(TOK_ENTERO); returnType = TIPO_ENTERO; }
+    else if (t.type == TOK_CHAR) { match(TOK_CHAR); returnType = TIPO_CHAR; }
+    else if (t.type == TOK_CADENA) { match(TOK_CADENA); returnType = TIPO_CADENA; }
+    else if (t.type == TOK_LISTA) { match(TOK_LISTA); returnType = TIPO_LISTA; }
+    
+    // 2. OBTENER NOMBRE DE LA FUNCION
+    Token name = getNextToken(); 
+    
+    match(TOK_PAR_IZQ); // Ahora sí esperamos el parentesis '('
+    
+    // Registramos la funcion con su tipo de retorno
+    declareSymbol(name.value, SYM_FUNCION, returnType, getCodeCount(), 0);
     Symbol* funcSym = findSymbol(name.value);
     
     pushScope(name.value);
     localOffsetCounter = 0;
     
+    // 3. PROCESAR PARAMETROS
     int params = 0;
     if (peekToken().type != TOK_PAR_DER) {
         do {
             if (peekToken().type == TOK_COMA) match(TOK_COMA);
             
-            // Exigimos tipo en parámetros
+            // Exigimos tipo en parametros
             DataType paramType = TIPO_ENTERO; // Default
             if (peekToken().type == TOK_ENTERO) { match(TOK_ENTERO); paramType = TIPO_ENTERO; }
             else if (peekToken().type == TOK_CHAR) { match(TOK_CHAR); paramType = TIPO_CHAR; }
             else if (peekToken().type == TOK_CADENA) { match(TOK_CADENA); paramType = TIPO_CADENA; }
             else if (peekToken().type == TOK_LISTA) { match(TOK_LISTA); paramType = TIPO_LISTA; }
-            else { printf("Error: Se esperaba tipo en parametro\n"); exit(1); }
+            else { printf("Error: Se esperaba tipo en parametro %s\n", peekToken().value); exit(1); }
 
             Token paramName = getNextToken();
             declareSymbol(paramName.value, SYM_VAR_LOCAL, paramType, localOffsetCounter++, 0);

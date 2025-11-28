@@ -20,7 +20,7 @@ typedef enum {
 
 typedef struct {
     TokenType type;
-    char value[256]; // Aumentado para cadenas largas
+    char value[256];//cadenas largas
     int line;
 } Token;
 

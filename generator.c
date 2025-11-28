@@ -11,7 +11,7 @@ int codeCapacity = 200;
 char stringTable[100][256];
 int stringCount = 0;
 
-// ARRAY DE NOMBRES PARA DEBUG (Esto faltaba y causaba el error)
+// ARRAY DE NOMBRES PARA DEBUG
 const char* OpNames[] = {
     "LITERAL", "CARGAR_VAR", "GUARDAR_VAR",
     "SUMAR", "RESTAR", "MENOR",
@@ -40,7 +40,7 @@ void patch(int idx, int target) {
     code[idx].target = target; 
 }
 
-// Implementación de Strings
+// Implementacion de Strings
 int addStringConstant(const char* str) {
     strcpy(stringTable[stringCount], str);
     return stringCount++;
